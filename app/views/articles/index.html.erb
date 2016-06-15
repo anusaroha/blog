@@ -1,6 +1,37 @@
 <h1>Listing articles</h1>
-<% @articles.each do |articles| %>
-<%= articles.title %>
-<%= link_to articles.title, article_path(articles) %>
-<hr />
+<p><%= button_to "Submit a New Request", new_article_path, :method => :get %></p>
+
+<%= form_tag(articles_path, :method => "get", id: "search-form") do %>
+<%= text_field_tag :search, params[:search], placeholder: "Search Requests" %>
+<%= submit_tag "Search" %>
 <% end %>
+<% if @articles.present? %>
+  <%= render @articles %>
+<% else %>
+  <p>There are no requests containing the term(s) <%= params[:search] %>.</p>
+<% end %><br>
+<br>
+
+<div>
+<table width='100%' border="1">
+  <tr>
+    <th>Title</th>
+    <th>Text</th>
+    <th>Actions</th>
+
+  </tr>
+
+  <% @articles.each do |s| %>
+    <tr style="text-align:center">
+      <td><%= link_to s.title, article_path(s) %></td>
+      <td><%= truncate(s.text, length: 50) %></td>
+      <td><%= link_to 'Edit', edit_article_path(s) %>
+      <%= link_to 'Delete', article_path(s),
+              method: :delete,
+              data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+</table>
+</div>
+<br />
+<%= paginate @articles %>
