@@ -5,8 +5,8 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-1000.times do
-  request = Article.new( title: Faker::Name.title,
-                          text: Faker::Hacker.say_something_smart)
-  request.save
+if Category.count == 0
+  ["Controversial Posts", "Infographics", "Podcast Show Notes", "Videos", "Interviews", "Guest Posts", "Blog Series"].each do |cat|
+    Category.create title: cat
+  end
 end

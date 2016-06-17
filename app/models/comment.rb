@@ -1,6 +1,4 @@
-class Article < ActiveRecord::Base
-  has_many :comments
-  include Comments::Comment
-  validates :title, presence: true,
-                    length: { minimum: 5 }
+class Comment < ActiveRecord::Base
+  belongs_to :article
+  validates :body, presence: true, uniqueness: {scope: :article_id}
 end

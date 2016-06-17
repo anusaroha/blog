@@ -1,30 +1,17 @@
 class ArticlesController < ApplicationController
 
 before_action :find_article, only: [:show, :edit, :update, :destroy]
-
+before_action :authenticate_user!, execpt: [:show, :index]
   def index
-    # @articles = Article.all
-    # if params[:search]
-    #   @articles = Article.search(params[:search]).order("created_at DESC")
-    # else
-    #   @articles = Article.all.order('created_at DESC')
-    # end
-    #
-    # @articles = Article.paginate(:page => params[:page], :per_page => 5)
     @articles = Article.search(params[:search])
-    if @articles.class == Array
-      @articles = Kaminari.paginate_array(@articles).page(params[:page]).per(7)
-    else
-      @articles = @articles.page(params[:page]).limit(7)
-    end
+    @articles = Article.order(created_at: :desc)
   end
 
 def edit
-  @article = Article.find(params[:id])
 end
 
   def show
-    @article = Article.find(params[:id])
+    @comment = Comment.new
   end
 
   def new
@@ -32,36 +19,40 @@ end
   end
 
   def create
-    @article = Article.new(article_params)
+    @article = Article.new article_params
+    @article.user = current_user
     if @article.save
-      redirect_to @article
+      flash[:notice] = "Article Created!"
+      redirect_to article_path(@article)
     else
-      render 'new'
+      flash[:alert] = "Article not created!"
+      render :new
     end
   end
 
   def update
-    @article = Article.find(params[:id])
-    if @article.update(article_params)
-      redirect_to @article
+    if @article.update article_params
+      redirect_to article_path(@article), notice: "Article Updated"
     else
-      render 'edit'
+      render :edit
     end
   end
 
   def destroy
-    @article = Article.find(params[:id])
     @article.destroy
-
-    redirect_to articles_path
+    redirect_to articles_path, notice: "Questions deleted"
   end
 
   private
     def article_params
-      params.require(:article).permit(:title, :text)
+      article_params = params.require(:article).permit(:title, :text, :category_id)
     end
 
     def find_article
       @article = Article.find params[:id]
+    end
+
+    def authenticate_user!
+      redirect_to new_session_path, alert: "Please sign in" unless user_signed_in?
     end
 end
