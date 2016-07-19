@@ -1,0 +1,5 @@
+<p>Hello <%= @article.user.full_name %>,</p>
+<p><%= @user.full_name.capitalize %> has just liked your article titled: <%= @article.title %>.</p>
+<p>Click <%= link_to "here", article_path(@article) %> to view your article.</p>
+<p>Regards,</p>
+<p>Awesome Articles Team</p>

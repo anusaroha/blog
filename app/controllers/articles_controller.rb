@@ -1,17 +1,24 @@
 class ArticlesController < ApplicationController
 
+before_action :authorize_user, only: [:edit, :update, :destroy]
+before_action :authenticate_user!, except: [:index, :show]
 before_action :find_article, only: [:show, :edit, :update, :destroy]
-before_action :authenticate_user!, execpt: [:show, :index]
+
+
   def index
-    @articles = Article.search(params[:search])
-    @articles = Article.order(created_at: :desc)
+    @articles = Article.all
+    @a = Article.ransack(params[:q])
+    @people = @a.result(distinct: true)
+    @articles = Article.order(:title).page params[:page]
   end
 
 def edit
+  redirect_to root_path, alert: "access defined" unless can? :edit, @article
 end
 
   def show
     @comment = Comment.new
+    @like = @article.like_for(current_user)
   end
 
   def new
@@ -31,28 +38,27 @@ end
   end
 
   def update
+    redirect_to root_path, alert: "access denined" unless can? :update, @article
     if @article.update article_params
       redirect_to article_path(@article), notice: "Article Updated"
     else
       render :edit
     end
+
   end
 
   def destroy
+    redirect_to root_path, alert: "access denined" unless can? :destroy, @article
     @article.destroy
     redirect_to articles_path, notice: "Questions deleted"
   end
 
   private
     def article_params
-      article_params = params.require(:article).permit(:title, :text, :category_id)
+      params.require(:article).permit(:title, :text, :category_id, :user_id, :tag_names)
     end
 
     def find_article
       @article = Article.find params[:id]
-    end
-
-    def authenticate_user!
-      redirect_to new_session_path, alert: "Please sign in" unless user_signed_in?
     end
 end

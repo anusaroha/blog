@@ -1,0 +1,23 @@
+$brand-primary: #ffcc99;
+$border-radius-base: 0px;
+
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+abbr[title] {
+  cursor: default;
+}
+
+body{
+  font-size: 1.4em;
+  line-height: 1.5em;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+}
+
+.navbar{
+  padding-top: 10px;
+  background-color: darkblue;
+  position: fixed;
+  width: 100%;
+  top: 0;
+}

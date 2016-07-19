@@ -1,9 +1,11 @@
 <h1>Listing articles</h1>
 <p><%= button_to "Submit a New Request", new_article_path, :method => :get %></p>
 
-<%= form_tag(articles_path, :method => "get", id: "search-form") do %>
-<%= text_field_tag :search, params[:search], placeholder: "Search Requests" %>
-<%= submit_tag "Search" %>
+<%= search_form_for @a do |f| %>
+  <%= f.label :name_cont %>
+  <%= f.search_field :title_cont %>
+  <%= f.submit %>
+
 <% end %>
 <% if @articles.present? %>
   <%= render @articles %>
@@ -15,22 +17,30 @@
 <div>
 <table width='100%' border="1">
   <tr>
-    <th>Title</th>
-    <th>Text</th>
-    <th>Actions</th>
-
+    <th style="text-align:center">Title</th>
+    <th style="text-align:center">Text</th>
+    <% if can? :edit, @article %>
+    <th style="text-align:center">Actions</th>
+    <% end %>
+    <th style="text-align:center">Tags</th>
   </tr>
 
   <% @articles.each do |s| %>
     <tr style="text-align:center">
       <td><%= link_to s.title, article_path(s) %></td>
       <td><%= truncate(s.text, length: 50) %></td>
+      <% if can? :edit, @article %>
       <td><%= link_to 'Edit', edit_article_path(s) %>
+      <% end %>
+      <% if can? :destroy, @article %>
       <%= link_to 'Delete', article_path(s),
               method: :delete,
               data: { confirm: 'Are you sure?' } %></td>
+      <% end %>
+      <td><%= s.tag_names %></td>
     </tr>
   <% end %>
+  <%= paginate @articles %>
 </table>
 </div>
 <br />

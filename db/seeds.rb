@@ -10,3 +10,10 @@ if Category.count == 0
     Category.create title: cat
   end
 end
+
+
+50.times do
+  Article.create title: Faker::Book.title,
+                 text: Faker::Lorem.sentences,
+                 user_id: Faker::Number.between(1, 3)
+end
