@@ -1,14 +1,51 @@
-<p>
-  <strong>Title:</strong>
-  <%= @article.title %>
-</p>
+<div class="article-header">
+  <h1>Article</h1>
+</div>
+<div class="article-title">
+  <p>
+    <strong>Title:</strong>
+    <%= @article.title %>
+  </p>
+</div>
+<div class="article-body">
+  <p>
+    <strong>Text:</strong>
+    <%= @article.text %>
+  </p>
+</div>
+<div class="article-tags">
+  <strong>Tags: </strong>
+  <%= @article.tag_names %>
+</div>
 
-<p>
-  <strong>Text:</strong>
-  <%= @article.text %>
-</p>
-<%= link_to "Edit", edit_article_path(@article) %>
-<%= link_to "Delete", article_path(@article),
-                      method: :delete,
-                      data: {confirm: "Are you sure"}%>
+<% if @like.present? && @like.persisted? %>
+  <%= link_to "Un-Like", article_like_path(@article, @like), method: :delete %>
+<% else %>
+  <%= link_to "Like", article_likes_path(@article), method: :post %>
+<% end %>
+
+<% if can? :edit, @article %>
+  <%= link_to "Edit", edit_article_path(@article) %>
+<% end %>
+
+<% if can? :destroy, @article %>
+  <%= link_to "Delete", article_path(@article), method: :delete, data: {confirm: "Are you sure?"} %>
+<% end %>
+<h2>Make a Comment</h2>
+<%= simple_form_for [@article, @comment] do |f| %>
+  <div class="container">
+    <%= f.input :body %>
+    <br />
+    <%= f.button :submit %>
+  </div>
+<% end %>
+
+<h3>Comments</h3>
+<% @article.new_first_comments.each do |comms| %>
+  <strong>Body :</strong>
+  <%= comms.body %> <br />
+  <% if can? :destroy, comms  %>
+    <%= link_to "Delete", [@article, comms], method: :delete, data: {confirm: "Are you sure?"} %>
+  <% end %>
+<% end %>
 <%= link_to 'Back', articles_path %>

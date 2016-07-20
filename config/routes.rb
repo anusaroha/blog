@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  resources :users
+  get 'password_resets/new'
+
+  get 'password_resets/edit'
+
   get 'home/index'
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -7,7 +12,17 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'home#index'
 
-  resources :articles
+  resources :users, only: [:new, :create, :edit, :update, :show]
+
+  resources :sessions, only: [:new, :create] do
+    delete :destroy, on: :collection
+  end
+  resources :articles do
+    resources :comments, only: [:create, :destroy]
+    resources :likes, only: [:create, :destroy]
+  end
+
+  resources :password_resets, only: [:new, :create, :edit, :update]
 
   get "/about" => "home#about"
   # Example of regular route:

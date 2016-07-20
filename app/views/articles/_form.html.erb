@@ -1,0 +1,17 @@
+<%= simple_form_for @article do |f| %>
+  <div class="container">
+    <p>
+      <%= f.input :title %>
+    </p>
+    <p>
+      <%= f.input :text, {rows: "10", cols: "50"}%>
+    </p>
+      <%= f.input :category_id, :collection => Category.all %>
+    <div>
+      <%= f.text_field :tag_names, placeholder: "Tags separated with comma" %>
+    </div>
+    <p>
+      <%= f.submit %>
+    </p>
+  </div>
+  <% end %>
